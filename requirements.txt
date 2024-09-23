@@ -1,4 +1,4 @@
-inference-gpu
+inference-gpu==0.18.1 
 requests==2.31.0
 supervision
 pydantic==2.8.0
