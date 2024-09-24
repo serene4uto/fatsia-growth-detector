@@ -1,0 +1,24 @@
+{
+    "name": "fatsia-growth-detector-pyenv",
+    "image": "python:3.10",
+    "runArgs": [
+        "--name", "fatsia-growth-detector-pyenv",
+        "--net", "host",
+        "--gpus", "all",
+        "--privileged",
+        "-v", "/dev:/dev",
+        "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
+        "-e", "DISPLAY"
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python3",
+                "python.selectInterpreter": "/usr/local/bin/python3"
+            },
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    }
+}
