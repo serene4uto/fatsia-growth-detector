@@ -1,15 +1,15 @@
 
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QStatusBar
 
-#TODO: make config file
-__appname__ = "fatsia growth detector"
-__appdescription__ = "An application to detect the growth of fatsia plants"
+from fatsia_growth.app_info import __appname__, __appdescription__
+from fatsia_growth.views.monitor.monitor_widget import MonitorWidget
 
 class MainWindow(QMainWindow):
     """Main window of the application."""
 
     def __init__(
         self,
+        app=None,
         # Add any other parameters here
     ):
         super().__init__()
@@ -23,7 +23,9 @@ class MainWindow(QMainWindow):
         main_layout.setContentsMargins(10, 10, 10, 10)
 
         # Custom widgets go here
-
+        monitor_widget = MonitorWidget()
+        main_layout.addWidget(monitor_widget)
+        
         # Set the main layout
         widget = QWidget()
         widget.setLayout(main_layout)
