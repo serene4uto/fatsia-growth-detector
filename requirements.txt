@@ -1,4 +1,6 @@
-inference-gpu==0.18.1 
+PyQt5==5.15.9
+opencv-python-headless==4.8.0.76
+inference-gpu==0.18.1
 requests==2.31.0
-supervision
+supervision==0.21.0
 pydantic==2.8.0
