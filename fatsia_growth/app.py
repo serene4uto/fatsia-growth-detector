@@ -2,7 +2,6 @@ import sys
 from PyQt5 import QtWidgets, QtCore
 
 from fatsia_growth.app_info import __appname__
-
 from fatsia_growth.views.mainwindow import MainWindow
 
 

@@ -1,5 +1,5 @@
 PyQt5==5.15.11
-opencv-python-headless==4.10.0.84
+# opencv-python-headless==4.10.0.84
 inference-gpu==0.18.1
 requests==2.31.0
 supervision==0.21.0

@@ -8,13 +8,12 @@ def get_available_cameras(max_cameras=10):
         max_cameras (int): Maximum number of camera indices to check.
 
     Returns:
-        list of tuples: Each tuple contains (camera_id, camera_name)
+        list of camera indices that are available.
     """
     available_cameras = []
     for camera_id in range(max_cameras):
         cap = cv2.VideoCapture(camera_id)
         if cap is not None and cap.isOpened():
-            camera_name = f"Camera {camera_id}"
-            available_cameras.append((camera_id, camera_name))
+            available_cameras.append(camera_id)
             cap.release()
     return available_cameras
