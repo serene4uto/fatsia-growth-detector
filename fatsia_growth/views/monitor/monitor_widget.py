@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 
+from PyQt5.QtCore import pyqtSlot
+
 from fatsia_growth.utils.logger import logger
 from fatsia_growth.views.monitor.widgets import (
     ResultImageDisplay,
@@ -69,11 +71,15 @@ class MonitorWidget(QWidget):
             self.option_bar.on_model_toggle_status_changed
         )
         
-        
+    @pyqtSlot(object)
     def on_camera_frame_captured(self, frame):
         # logger.info("Frame captured.")
+        if self.growth_detector.frame_queue.full():
+            # logger.warning("Frame queue is full. Dropping frame.")
+            return
         self.growth_detector.frame_queue.put(frame)
     
+    @pyqtSlot(str)
     def on_model_toggle_requested(self, model_id):
         if model_id == "":
             # Stop the model service
@@ -86,7 +92,8 @@ class MonitorWidget(QWidget):
                 self.growth_detector.stop()
             
             self.growth_detector.start(model_id)
-        
+    
+    @pyqtSlot(int)
     def on_camera_connection_requested(self, camera_id):
         if camera_id < 0:
             # Stop the camera service

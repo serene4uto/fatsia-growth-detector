@@ -1,6 +1,7 @@
 import queue
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
+import torch
 import inference
 
 from fatsia_growth.utils.logger import logger
