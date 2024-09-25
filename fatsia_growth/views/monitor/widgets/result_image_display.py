@@ -3,6 +3,8 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap, QImage
 import numpy as np
 
+from fatsia_growth.utils.logger import logger
+
 IMAGE_PATH = '/home/serene/fatsia-growth-project/fatsia-growth-detector/fatsia_growth/resources/temp/240623_12_55_02_-063_bmp.rf.ecd02ba6eb52af80f76b867c46f5c6d5.jpg'
 
 # show image
@@ -28,6 +30,7 @@ class ResultImageDisplay(QWidget):
     
     @pyqtSlot(object)
     def on_frame_captured(self, frame):
+        logger.info("Frame captured.")
         # Check if the input is a numpy array
         if isinstance(frame, np.ndarray):
             # Convert the numpy array to QImage

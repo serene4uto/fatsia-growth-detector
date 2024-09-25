@@ -1,19 +1,19 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 
+from fatsia_growth.utils.logger import logger
 from fatsia_growth.views.monitor.widgets import (
     ResultImageDisplay,
     OptionBar
 )
 
 from fatsia_growth.services.camera_service import CameraService
+from fatsia_growth.services.growth_detector import GrowthDetector
 
 class MonitorWidget(QWidget):
     def __init__(
         self
     ):
         super().__init__()
-        
-        
         
         #define actions
         
@@ -30,7 +30,10 @@ class MonitorWidget(QWidget):
         self.option_bar = OptionBar()
         self.option_bar.camera_connection_requested.connect(
             self.on_camera_connection_requested
-        )            
+        )  
+        self.option_bar.model_toggle_requested.connect(
+            self.on_model_toggle_requested
+        )          
         
         self.result_image_display = ResultImageDisplay()        
         
@@ -51,12 +54,33 @@ class MonitorWidget(QWidget):
         
         
         self.camera_service = CameraService()
+        self.growth_detector = GrowthDetector()
+        
+        
         self.camera_service.camera_connection_changed.connect(
             self.option_bar.on_camera_connection_changed
         )
         self.camera_service.frame_captured.connect(
-            self.result_image_display.on_frame_captured
+            # self.result_image_display.on_frame_captured
+            self.on_camera_frame_captured
         )
+        
+        
+    def on_camera_frame_captured(self, frame):
+        self.growth_detector.frame_queue.put(frame)
+    
+    def on_model_toggle_requested(self, model_id):
+        if model_id == "":
+            # Stop the model service
+            if self.growth_detector.thread.isRunning():
+                self.growth_detector.stop()
+        else:
+            # Start the model service
+            
+            if self.growth_detector.thread.isRunning():
+                self.growth_detector.stop()
+            
+            self.growth_detector.start(model_id)
         
     def on_camera_connection_requested(self, camera_id):
         if camera_id < 0:
@@ -66,9 +90,6 @@ class MonitorWidget(QWidget):
             return
         else:
             # Start the camera service
-            if camera_id == self.camera_service.camera_id:
-                return
-
             if self.camera_service.thread.isRunning():
                 self.camera_service.stop()
 

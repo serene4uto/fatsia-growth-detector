@@ -1,6 +1,8 @@
 import cv2
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 
+from fatsia_growth.utils.logger import logger
+
 class CameraService(QObject):
     
     camera_connection_changed = pyqtSignal(bool)
@@ -22,6 +24,7 @@ class CameraService(QObject):
         try:
             self.cap = cv2.VideoCapture(self.camera_id)
             if self.cap.isOpened():
+                logger.info(f"Camera {self.camera_id} opened successfully.")
                 self.camera_connection_changed.emit(True)
                 self._running = True
                 while self._running:
@@ -29,11 +32,12 @@ class CameraService(QObject):
                     if ret:
                         self.frame_captured.emit(frame)
             else:
+                logger.error(f"Camera {self.camera_id} could not be opened.")
                 # Camera could not be opened, emit signal with -1
                 self.camera_connection_changed.emit(False)
                 self.stop()
         except Exception as e:
-            print(f"Exception in camera thread: {e}")
+            logger.error(f"Exception in camera thread: {e}")
             self.stop()
 
     def start(self, camera_id):
@@ -45,6 +49,7 @@ class CameraService(QObject):
         self._running = False
         self.camera_id = None
         if self.cap and self.cap.isOpened():
+            logger.info(f"Releasing camera {self.camera_id}.")
             self.cap.release()
             self.cap = None
         

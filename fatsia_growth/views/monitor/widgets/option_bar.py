@@ -9,7 +9,9 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 
+from fatsia_growth.services.growth_detector import get_roboflow_model_ids
 from fatsia_growth.utils.camera_utils import get_available_cameras
+
 
 class CameraComboBox(QComboBox):
     
@@ -44,11 +46,13 @@ class CameraComboBox(QComboBox):
 class OptionBar(QWidget):
     
     camera_connection_requested = pyqtSignal(int)
+    model_toggle_requested = pyqtSignal(str)
     
     def __init__(self):
         super().__init__()
         
         self.is_camera_connected = False
+        self.is_model_loaded = False
         
         # Set the geometry
         self.setGeometry(0, 0, 1118, 68)  # x=0, y=0, width=1118, height=68
@@ -84,15 +88,16 @@ class OptionBar(QWidget):
         model_label.setFixedWidth(40)
         option_layout.addWidget(model_label)
         option_layout.addSpacing(0)
-        model_selection_combobox = QComboBox()
-        model_selection_combobox.setEnabled(True)
-        model_selection_combobox.setFixedWidth(150)
-        model_selection_combobox.addItem("Model 1")
-        option_layout.addWidget(model_selection_combobox)
+        self.model_selection_combobox = QComboBox()
+        self.model_selection_combobox.setEnabled(True)
+        self.model_selection_combobox.setFixedWidth(200)
+        for model_id in get_roboflow_model_ids():
+            self.model_selection_combobox.addItem(model_id)
+        option_layout.addWidget(self.model_selection_combobox)
         option_layout.addSpacing(10)
-        model_load_button = QPushButton("Load")
-        model_load_button.setFixedWidth(100)
-        option_layout.addWidget(model_load_button)
+        self.btn_model_action = QPushButton("Load")
+        self.btn_model_action.setFixedWidth(100)
+        option_layout.addWidget(self.btn_model_action)
         
         option_layout.addSpacing(30)
         option_layout.addStretch(1) # Add stretch to push the widgets to the left
@@ -100,8 +105,27 @@ class OptionBar(QWidget):
         # Set the horizontal layout directly to the widget
         self.setLayout(option_layout)
         
-        
         self.btn_camera_connection.clicked.connect(self.on_camera_connection_btn)
+        self.btn_model_action.clicked.connect(self.on_model_action_btn)
+    
+    
+    def on_model_action_btn(self):
+        if self.is_model_loaded:
+            # Request to unload the model
+            self.btn_model_action.setText("Unloading...")
+            self.btn_model_action.setEnabled(False)
+            self.model_toggle_requested.emit("")
+        else:
+            # Request to load the model
+            model_id = self.model_selection_combobox.currentText()
+            if model_id:
+                self.model_toggle_requested.emit(model_id)
+                self.btn_model_action.setText("Loading...")
+                self.btn_model_action.setEnabled(False)
+            else:
+                QMessageBox.critical(
+                    self, "Error", "Failed to get model ID."
+                )
         
     def on_camera_connection_btn(self):
         if self.is_camera_connected:
@@ -137,4 +161,18 @@ class OptionBar(QWidget):
             self.btn_camera_connection.setText("Disconnect")
             self.is_camera_connected = True
             self.btn_camera_connection.setEnabled(True)
+    
+    @pyqtSlot(bool)
+    def on_model_loaded_changed(self, loaded):
+        if not loaded:
+            # Model unloaded or failed to load (#TODO: show error message if failed to load)
+            self.btn_model_action.setText("Load")
+            self.is_model_loaded = False
+            self.btn_model_action.setEnabled(True)
+            self.model_selection_combobox.setEnabled(True)
+        else:
+            # Model loaded
+            self.btn_model_action.setText("Unload")
+            self.is_model_loaded = True
+            self.btn_model_action.setEnabled(True)
                 
