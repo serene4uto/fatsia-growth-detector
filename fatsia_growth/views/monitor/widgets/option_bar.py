@@ -163,7 +163,7 @@ class OptionBar(QWidget):
             self.btn_camera_connection.setEnabled(True)
     
     @pyqtSlot(bool)
-    def on_model_loaded_changed(self, loaded):
+    def on_model_toggle_status_changed(self, loaded):
         if not loaded:
             # Model unloaded or failed to load (#TODO: show error message if failed to load)
             self.btn_model_action.setText("Load")

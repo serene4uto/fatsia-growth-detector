@@ -65,8 +65,13 @@ class MonitorWidget(QWidget):
             self.on_camera_frame_captured
         )
         
+        self.growth_detector.model_toggle_status_changed.connect(
+            self.option_bar.on_model_toggle_status_changed
+        )
+        
         
     def on_camera_frame_captured(self, frame):
+        # logger.info("Frame captured.")
         self.growth_detector.frame_queue.put(frame)
     
     def on_model_toggle_requested(self, model_id):

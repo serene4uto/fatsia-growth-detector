@@ -15,6 +15,7 @@ def get_roboflow_model_ids():
 
 class GrowthDetector(QObject):
     
+    model_toggle_status_changed = pyqtSignal(bool)
     frame_queue = queue.Queue(maxsize=10)
     
     def __init__(
@@ -41,6 +42,7 @@ class GrowthDetector(QObject):
             
             if self.rbf_model is not None:
                 logger.info(f"Model {self.rbf_model_id} loaded successfully.")
+                self.model_toggle_status_changed.emit(True)
                 self._running = True
                 while self._running:
                     if not self.frame_queue.empty():
@@ -58,17 +60,25 @@ class GrowthDetector(QObject):
         
         
     def start(self, model_id):
-        self.rbf_model_ids = model_id
+        self.rbf_model_id = model_id
         if not self.thread.isRunning():
             self.thread.start()
     
     def stop(self):
+        self._running = False
+        self.rbf_model_id = None
+        self.rbf_model = None
+        
         if self.thread.isRunning():
             self.thread.quit()
             self.thread.wait()
             
-        self.rbf_model_id = None
-        self.rbf_model = None
+        self.model_toggle_status_changed.emit(False)
+        logger.info("Model stopped.")
+            
+
+        
+        
     
     # @pyqtSlot(object)
     # def on_frame_captured(self, frame):

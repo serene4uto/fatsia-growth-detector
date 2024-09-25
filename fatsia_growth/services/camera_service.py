@@ -34,7 +34,6 @@ class CameraService(QObject):
             else:
                 logger.error(f"Camera {self.camera_id} could not be opened.")
                 # Camera could not be opened, emit signal with -1
-                self.camera_connection_changed.emit(False)
                 self.stop()
         except Exception as e:
             logger.error(f"Exception in camera thread: {e}")
