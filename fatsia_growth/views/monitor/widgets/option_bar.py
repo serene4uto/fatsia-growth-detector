@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QMessageBox,
     QPushButton,
+    QCheckBox,
 )
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 
@@ -47,12 +48,14 @@ class OptionBar(QWidget):
     
     camera_connection_requested = pyqtSignal(int)
     model_toggle_requested = pyqtSignal(str)
+    upload_server_requested = pyqtSignal(bool)
     
     def __init__(self):
         super().__init__()
         
         self.is_camera_connected = False
         self.is_model_loaded = False
+        self.is_upload_server_enabled = False
         
         # Set the geometry
         self.setGeometry(0, 0, 1118, 68)  # x=0, y=0, width=1118, height=68
@@ -67,8 +70,8 @@ class OptionBar(QWidget):
         option_layout.setContentsMargins(4, 0, 0, 0)  # left, top, right, bottom margins
         
         # Camera Option
-        camera_label = QLabel("Camera")
-        camera_label.setFixedWidth(50)
+        camera_label = QLabel("Camera :")
+        camera_label.setFixedWidth(60)
         option_layout.addWidget(camera_label)
         option_layout.addSpacing(0)
         self.camera_selection_combobox = CameraComboBox()
@@ -84,8 +87,8 @@ class OptionBar(QWidget):
         option_layout.addSpacing(50)
         
         # Model Option
-        model_label = QLabel("Model")
-        model_label.setFixedWidth(40)
+        model_label = QLabel("Model :")
+        model_label.setFixedWidth(50)
         option_layout.addWidget(model_label)
         option_layout.addSpacing(0)
         self.model_selection_combobox = QComboBox()
@@ -99,16 +102,39 @@ class OptionBar(QWidget):
         self.btn_model_action.setFixedWidth(100)
         option_layout.addWidget(self.btn_model_action)
         
-        option_layout.addSpacing(30)
-        option_layout.addStretch(1) # Add stretch to push the widgets to the left
+        option_layout.addSpacing(50)
+
+        # Send to the server option
+        self.upload_server_label = QLabel("Upload to Server :")
+        self.upload_server_label.setFixedWidth(110)
+        option_layout.addWidget(self.upload_server_label)
+        self.upload_server_btn = QPushButton("Enable")
+        self.upload_server_btn.setFixedWidth(100)
+        option_layout.addWidget(self.upload_server_btn)
         
+        option_layout.addSpacing(50)
+        option_layout.addStretch(1) # Add stretch to push the widgets to the left
+
         # Set the horizontal layout directly to the widget
         self.setLayout(option_layout)
         
         self.btn_camera_connection.clicked.connect(self.on_camera_connection_btn)
         self.btn_model_action.clicked.connect(self.on_model_action_btn)
-    
-    
+        self.upload_server_btn.clicked.connect(self.on_upload_server_btn)
+        
+    def on_upload_server_btn(self):
+        if self.is_upload_server_enabled:
+            # Request to disable the upload server
+            self.upload_server_btn.setText("Enable")
+            self.is_upload_server_enabled = False
+            self.upload_server_requested.emit(False)
+        else:
+            # Request to enable the upload server
+            self.upload_server_btn.setText("Disable")
+            self.is_upload_server_enabled = True
+            self.upload_server_requested.emit(True)
+        
+        
     def on_model_action_btn(self):
         if self.is_model_loaded:
             # Request to unload the model
@@ -122,6 +148,7 @@ class OptionBar(QWidget):
                 self.model_toggle_requested.emit(model_id)
                 self.btn_model_action.setText("Loading...")
                 self.btn_model_action.setEnabled(False)
+                self.model_selection_combobox.setEnabled(False)
             else:
                 QMessageBox.critical(
                     self, "Error", "Failed to get model ID."

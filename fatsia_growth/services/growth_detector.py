@@ -16,13 +16,19 @@ def get_roboflow_model_ids():
 
 class GrowthDetector(QObject):
     
-    model_toggle_status_changed = pyqtSignal(bool)
     frame_queue = queue.Queue(maxsize=10)
+    model_toggle_status_changed = pyqtSignal(bool)
+    model_prediction_result_to_plot = pyqtSignal(object, object)
+    
+    model_result_upload = False
+    model_result_upload_signal = pyqtSignal(object, object)
     
     def __init__(
         self
     ):
         super().__init__()
+        
+        self.model_result_upload = False
         
         self.rbf_api_key = ROBOFLOW_API_KEY
         self.rbf_model_id = None
@@ -45,12 +51,19 @@ class GrowthDetector(QObject):
                 logger.info(f"Model {self.rbf_model_id} loaded successfully.")
                 self.model_toggle_status_changed.emit(True)
                 self._running = True
+                
                 while self._running:
                     if not self.frame_queue.empty():
                         frame = self.frame_queue.get()
-                        result = self.rbf_model.infer(frame)[0]
-                        logger.info(f"Prediction result: {result}")
+                        results = self.rbf_model.infer(frame)[0]
+                        # logger.info(f"Prediction result: {results}")
+                        self.model_prediction_result_to_plot.emit(frame, results)
                         
+                        if len(results.predictions) > 0:
+                            logger.info(f"Prediction result: {results}")
+                            if self.model_result_upload:
+                                self.model_result_upload_signal.emit(frame, results)
+                            
             else:
                 logger.error(f"Model {self.rbf_model_id} could not be loaded.")
                 self.stop()
