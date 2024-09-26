@@ -2,8 +2,6 @@ logger_level: info
 device_id: fatsia_device_0
 
 
-
-
 # roboflow
 roboflow_api_key: 7FfprDdtq5BKCbQSjE91
 roboflow_model_ids:
