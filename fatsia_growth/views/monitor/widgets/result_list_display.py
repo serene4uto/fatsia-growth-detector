@@ -97,7 +97,7 @@ class ResultListDisplay(QWidget):
                 QStandardItem(prediction.class_name),
                 QStandardItem(f"{prediction.confidence:.2f}"),
                 # QStandardItem(f"{prediction.class_confidence}"),
-                QStandardItem(f"({prediction.x}, {prediction.y}, {prediction.width}, {prediction.height})")
+                QStandardItem(f"(x: {prediction.x}, y: {prediction.y}, w: {prediction.width}, h: {prediction.height})")
             ]
             
             # Optionally, align text to center for better readability
