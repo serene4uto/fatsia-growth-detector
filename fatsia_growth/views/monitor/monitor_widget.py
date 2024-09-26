@@ -1,11 +1,16 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import (
+    QWidget,
+    QVBoxLayout, 
+    QHBoxLayout, 
+)
 
 from PyQt5.QtCore import pyqtSlot
 
 from fatsia_growth.utils.logger import logger
 from fatsia_growth.views.monitor.widgets import (
     ResultImageDisplay,
-    OptionBar
+    OptionBar,
+    ResultListDisplay,
 )
 
 from fatsia_growth.services.camera_service import CameraService
@@ -28,9 +33,9 @@ class MonitorWidget(QWidget):
         
         
         layout.addLayout(central_layout)
-        # self.label_options = QLabel("Options")
-        # central_layout.addWidget(self.label_options)
+        
         self.option_bar = OptionBar()
+        self.option_bar.setFixedHeight(100)
         self.option_bar.camera_connection_requested.connect(
             self.on_camera_connection_requested
         )  
@@ -53,6 +58,11 @@ class MonitorWidget(QWidget):
         
         #TODO: create a right layout
         right_layout = QVBoxLayout()
+        
+        self.result_list_display = ResultListDisplay()
+        right_layout.addWidget(self.result_list_display)
+        
+        
         layout.addLayout(right_layout)
         
         # set the layout
@@ -73,13 +83,15 @@ class MonitorWidget(QWidget):
         self.growth_detector.model_toggle_status_changed.connect(
             self.option_bar.on_model_toggle_status_changed
         )
-        self.growth_detector.model_prediction_result_to_plot.connect(
+        self.growth_detector.model_result_image_plot_signal.connect(
             self.result_image_display.on_model_result_to_plot
         )
         self.growth_detector.model_result_upload_signal.connect(
             self.on_model_result_upload_signal
         )
-        # self.results_uploader.
+        self.growth_detector.model_result_display_signal.connect(
+            self.result_list_display.on_model_result_display_signal
+        )
         
     
     @pyqtSlot(object, object)

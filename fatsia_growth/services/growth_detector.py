@@ -8,6 +8,9 @@ from fatsia_growth.utils.logger import logger
 
 ROBOFLOW_API_KEY = "7FfprDdtq5BKCbQSjE91"
 ROBOFLOW_MODEL_IDS = [
+    "fatsia_growth_stages/1",
+    "fatsia_growth_stages/2",
+    "fatsia_growth_stages/3",
     "fatsia_growth_stages/4",
 ]
 
@@ -18,10 +21,13 @@ class GrowthDetector(QObject):
     
     frame_queue = queue.Queue(maxsize=10)
     model_toggle_status_changed = pyqtSignal(bool)
-    model_prediction_result_to_plot = pyqtSignal(object, object)
+    model_result_image_plot_signal = pyqtSignal(object, object)
     
     model_result_upload = False
     model_result_upload_signal = pyqtSignal(object, object)
+    
+    model_result_display_signal = pyqtSignal(object)
+    
     
     def __init__(
         self
@@ -57,10 +63,12 @@ class GrowthDetector(QObject):
                         frame = self.frame_queue.get()
                         results = self.rbf_model.infer(frame)[0]
                         # logger.info(f"Prediction result: {results}")
-                        self.model_prediction_result_to_plot.emit(frame, results)
+                        self.model_result_image_plot_signal.emit(frame, results)
+                        
                         
                         if len(results.predictions) > 0:
                             logger.info(f"Prediction result: {results}")
+                            self.model_result_display_signal.emit(results)
                             if self.model_result_upload:
                                 self.model_result_upload_signal.emit(frame, results)
                             

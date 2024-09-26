@@ -1,4 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QWidget, 
+    QLabel, 
+    QVBoxLayout,
+    QGroupBox,
+)
+
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap, QImage
 import numpy as np
@@ -14,16 +20,17 @@ class ResultImageDisplay(QWidget):
         
         self.image_label = QLabel()
         self.image_label.setAlignment(Qt.AlignCenter)  # center the image
-        
-        # test
-        # Load the image
-        self.pixmap = None
         self.image_label.setText("Waiting for image.")
 
+        self.pixmap = None
         
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.image_label)
-        self.setLayout(self.layout)
+        main_layout = QVBoxLayout()
+        group_box = QGroupBox()
+        image_layout = QVBoxLayout()
+        image_layout.addWidget(self.image_label)
+        group_box.setLayout(image_layout)
+        main_layout.addWidget(group_box)
+        self.setLayout(main_layout)
     
     @pyqtSlot(object, object)
     def on_model_result_to_plot(self, frame, results):
@@ -45,6 +52,9 @@ class ResultImageDisplay(QWidget):
         bytes_per_line = channel * width
         q_image = QImage(annotated_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
         
+        # scale the image
+        q_image = q_image.scaled(1280, 720, Qt.KeepAspectRatio)
+        
         # Convert QImage to QPixmap
         self.pixmap = QPixmap.fromImage(q_image)
 
@@ -53,6 +63,7 @@ class ResultImageDisplay(QWidget):
         else:
             self.image_label.setPixmap(self.pixmap)
             # self.image_label.setScaledContents(True)  # Allow the pixmap to scale with the label
+            
             
     
     # @pyqtSlot(object)

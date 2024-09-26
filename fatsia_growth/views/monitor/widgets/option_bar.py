@@ -2,11 +2,12 @@ from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
     QHBoxLayout,
+    QVBoxLayout,
     QComboBox,
     QSizePolicy,
     QMessageBox,
     QPushButton,
-    QCheckBox,
+    QGroupBox,
 )
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 
@@ -58,17 +59,21 @@ class OptionBar(QWidget):
         self.is_upload_server_enabled = False
         
         # Set the geometry
-        self.setGeometry(0, 0, 1118, 68)  # x=0, y=0, width=1118, height=68
-        size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        size_policy.setHorizontalStretch(0)
-        size_policy.setVerticalStretch(0)
-        self.setSizePolicy(size_policy)
+        # self.setGeometry(0, 0, 1118, 68)  # x=0, y=0, width=1118, height=68
+        # size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        # size_policy.setHorizontalStretch(0)
+        # size_policy.setVerticalStretch(0)
+        # self.setSizePolicy(size_policy)
+        
+        main_layout = QVBoxLayout()
+        group_box = QGroupBox()
         
         # Create and configure the horizontal layout
         option_layout = QHBoxLayout()
-        option_layout.setSpacing(2)
-        option_layout.setContentsMargins(4, 0, 0, 0)  # left, top, right, bottom margins
+        # option_layout.setSpacing(2)
+        # option_layout.setContentsMargins(4, 0, 0, 0)  # left, top, right, bottom margins
         
+
         # Camera Option
         camera_label = QLabel("Camera :")
         camera_label.setFixedWidth(60)
@@ -76,15 +81,14 @@ class OptionBar(QWidget):
         option_layout.addSpacing(0)
         self.camera_selection_combobox = CameraComboBox()
         self.camera_selection_combobox.setEnabled(True)
-        # self.camera_selection_combobox.setMinimumSize(QSize(200, 0))
-        self.camera_selection_combobox.setFixedWidth(150)
+        self.camera_selection_combobox.setFixedWidth(100)
         option_layout.addWidget(self.camera_selection_combobox)
         option_layout.addSpacing(10)
         self.btn_camera_connection = QPushButton("Connect")
         self.btn_camera_connection.setFixedWidth(100)
         option_layout.addWidget(self.btn_camera_connection)
 
-        option_layout.addSpacing(50)
+        option_layout.addSpacing(20)
         
         # Model Option
         model_label = QLabel("Model :")
@@ -102,7 +106,7 @@ class OptionBar(QWidget):
         self.btn_model_action.setFixedWidth(100)
         option_layout.addWidget(self.btn_model_action)
         
-        option_layout.addSpacing(50)
+        option_layout.addSpacing(20)
 
         # Send to the server option
         self.upload_server_label = QLabel("Upload to Server :")
@@ -112,11 +116,12 @@ class OptionBar(QWidget):
         self.upload_server_btn.setFixedWidth(100)
         option_layout.addWidget(self.upload_server_btn)
         
-        option_layout.addSpacing(50)
+        option_layout.addSpacing(20)
         option_layout.addStretch(1) # Add stretch to push the widgets to the left
-
-        # Set the horizontal layout directly to the widget
-        self.setLayout(option_layout)
+        
+        group_box.setLayout(option_layout)
+        main_layout.addWidget(group_box)
+        self.setLayout(main_layout)
         
         self.btn_camera_connection.clicked.connect(self.on_camera_connection_btn)
         self.btn_model_action.clicked.connect(self.on_model_action_btn)
