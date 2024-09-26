@@ -23,9 +23,13 @@ class ResultsUploader(QObject):
     
     results_queue = queue.Queue(maxsize=10)
     
-    def __init__(self):
+    def __init__(
+        self,
+        config=None,
+    ):
         super().__init__()
         
+        self.config = config
         self._running = False
         
         self.thread = QThread()
@@ -48,7 +52,7 @@ class ResultsUploader(QObject):
                 # Upload the results
                 try:
                     response = requests.post(
-                        f"{SERVER_URL}/{RESULT_UPLOAD_ENDPOINT}",
+                        f"{self.config['server_url']}{self.config['server_fatsia_growth_endpoint']}",
                         json=json_data
                     )
                     response.raise_for_status()
@@ -61,11 +65,11 @@ class ResultsUploader(QObject):
         
         datetime_now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         growth_stage_data = GrowthStageData(
-            device_id=DEVICE_ID,
+            device_id=self.config['device_id'],
             timestamp=datetime_now,
             detections=[],  # Initialize detections
             image=ImageData(
-                image_filename=f"{DEVICE_ID}_{datetime_now}.jpg",
+                image_filename=f"{self.config['device_id']}_{datetime_now}.jpg",
                 image_base64=encode_image_frame_to_base64(frame)
             )
         )

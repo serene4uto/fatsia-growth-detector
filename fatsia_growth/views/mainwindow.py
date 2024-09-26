@@ -10,9 +10,12 @@ class MainWindow(QMainWindow):
     def __init__(
         self,
         app=None,
-        # Add any other parameters here
+        config=None,
     ):
         super().__init__()
+        
+        self.app = app
+        self.config = config
 
         # Set the window title
         self.setContentsMargins(0, 0, 0, 0)
@@ -23,7 +26,9 @@ class MainWindow(QMainWindow):
         main_layout.setContentsMargins(10, 10, 10, 10)
 
         # Custom widgets go here
-        monitor_widget = MonitorWidget()
+        monitor_widget = MonitorWidget(
+            config=config,
+        )
         main_layout.addWidget(monitor_widget)
         
         # Set the main layout

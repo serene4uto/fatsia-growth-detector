@@ -19,9 +19,12 @@ from fatsia_growth.services.results_uploader import ResultsUploader
 
 class MonitorWidget(QWidget):
     def __init__(
-        self
+        self,
+        config=None,
     ):
         super().__init__()
+        
+        self.config = config
         
         #define actions
         
@@ -34,7 +37,9 @@ class MonitorWidget(QWidget):
         
         layout.addLayout(central_layout)
         
-        self.option_bar = OptionBar()
+        self.option_bar = OptionBar(
+            config=config
+        )
         self.option_bar.setFixedHeight(100)
         self.option_bar.camera_connection_requested.connect(
             self.on_camera_connection_requested
@@ -70,8 +75,12 @@ class MonitorWidget(QWidget):
         
         # Services
         self.camera_service = CameraService()
-        self.growth_detector = GrowthDetector()
-        self.results_uploader = ResultsUploader()
+        self.growth_detector = GrowthDetector(
+            config=config
+        )
+        self.results_uploader = ResultsUploader(
+            config=config
+        )
         
         self.camera_service.camera_connection_changed.connect(
             self.option_bar.on_camera_connection_changed

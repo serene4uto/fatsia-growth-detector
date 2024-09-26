@@ -51,6 +51,7 @@ class ResultImageDisplay(QWidget):
         height, width, channel = annotated_image.shape
         bytes_per_line = channel * width
         q_image = QImage(annotated_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        q_image = q_image.rgbSwapped()  # BGR to RGB
         
         # scale the image
         q_image = q_image.scaled(1280, 720, Qt.KeepAspectRatio)

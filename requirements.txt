@@ -7,3 +7,4 @@ requests==2.31.0
 supervision==0.21.0
 pydantic==2.8.0
 termcolor==1.1.0
+# pyrealsense2==2.55.1

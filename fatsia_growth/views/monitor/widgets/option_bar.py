@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 
-from fatsia_growth.services.growth_detector import get_roboflow_model_ids
 from fatsia_growth.utils.camera_utils import get_available_cameras
 
 
@@ -51,8 +50,13 @@ class OptionBar(QWidget):
     model_toggle_requested = pyqtSignal(str)
     upload_server_requested = pyqtSignal(bool)
     
-    def __init__(self):
+    def __init__(
+        self,
+        config=None,
+    ):
         super().__init__()
+        
+        self.config = config
         
         self.is_camera_connected = False
         self.is_model_loaded = False
@@ -98,7 +102,7 @@ class OptionBar(QWidget):
         self.model_selection_combobox = QComboBox()
         self.model_selection_combobox.setEnabled(True)
         self.model_selection_combobox.setFixedWidth(200)
-        for model_id in get_roboflow_model_ids():
+        for model_id in config['roboflow_model_ids']:
             self.model_selection_combobox.addItem(model_id)
         option_layout.addWidget(self.model_selection_combobox)
         option_layout.addSpacing(10)

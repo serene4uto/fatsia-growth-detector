@@ -6,16 +6,6 @@ import inference
 
 from fatsia_growth.utils.logger import logger
 
-ROBOFLOW_API_KEY = "7FfprDdtq5BKCbQSjE91"
-ROBOFLOW_MODEL_IDS = [
-    "fatsia_growth_stages/1",
-    "fatsia_growth_stages/2",
-    "fatsia_growth_stages/3",
-    "fatsia_growth_stages/4",
-]
-
-def get_roboflow_model_ids():
-    return ROBOFLOW_MODEL_IDS
 
 class GrowthDetector(QObject):
     
@@ -28,15 +18,20 @@ class GrowthDetector(QObject):
     
     model_result_display_signal = pyqtSignal(object)
     
+    rbf_api_key = None
+    rbf_model_id_list = None
     
     def __init__(
-        self
+        self,
+        config=None,
     ):
         super().__init__()
         
         self.model_result_upload = False
         
-        self.rbf_api_key = ROBOFLOW_API_KEY
+        self.rbf_api_key = config['roboflow_api_key']
+        self.rbf_model_id_list = config['roboflow_model_ids']
+        
         self.rbf_model_id = None
         self.rbf_model = None
         

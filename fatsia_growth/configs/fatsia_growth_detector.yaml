@@ -1,0 +1,17 @@
+logger_level: info
+device_id: fatsia_device_0
+
+
+
+
+# roboflow
+roboflow_api_key: 7FfprDdtq5BKCbQSjE91
+roboflow_model_ids:
+  - fatsia_growth_stages/1
+  - fatsia_growth_stages/2
+  - fatsia_growth_stages/3
+  - fatsia_growth_stages/4
+
+# server
+server_url: http://127.0.0.1:8000
+server_fatsia_growth_endpoint: /fatsia/growth
