@@ -61,6 +61,8 @@ class OptionBar(QWidget):
         self.is_camera_connected = False
         self.is_model_loaded = False
         self.is_upload_server_enabled = False
+
+        self.is_log_result_enabled = False
         
         # Set the geometry
         # self.setGeometry(0, 0, 1118, 68)  # x=0, y=0, width=1118, height=68
@@ -119,6 +121,16 @@ class OptionBar(QWidget):
         self.upload_server_btn = QPushButton("Enable")
         self.upload_server_btn.setFixedWidth(100)
         option_layout.addWidget(self.upload_server_btn)
+
+        option_layout.addSpacing(20)
+
+        # Log to files option 
+        self.log_result_label = QLabel("Log result :")
+        self.log_result_label.setFixedWidth(70)
+        option_layout.addWidget(self.log_result_label)
+        self.log_result_btn = QPushButton("Enable")
+        self.log_result_btn.setFixedWidth(100)
+        option_layout.addWidget(self.log_result_btn)
         
         option_layout.addSpacing(20)
         option_layout.addStretch(1) # Add stretch to push the widgets to the left
@@ -130,6 +142,18 @@ class OptionBar(QWidget):
         self.btn_camera_connection.clicked.connect(self.on_camera_connection_btn)
         self.btn_model_action.clicked.connect(self.on_model_action_btn)
         self.upload_server_btn.clicked.connect(self.on_upload_server_btn)
+
+        self.log_result_btn.clicked.connect(self.on_log_result_btn)
+
+
+    def on_log_result_btn(self):
+        if self.is_log_result_enabled:
+            # Request to disable the log result operation
+            pass
+        else:
+            # Request to disable the log result operation
+            pass
+        
         
     def on_upload_server_btn(self):
         if self.is_upload_server_enabled:

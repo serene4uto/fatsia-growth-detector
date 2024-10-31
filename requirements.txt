@@ -2,7 +2,7 @@ torch==2.4.1
 PyQt5==5.15.11
 # opencv-python-headless==4.10.0.84
 # onnxruntime-gpu==1.18.0
-inference-gpu==0.20.1
+inference-gpu==0.24.0
 requests==2.31.0
 supervision==0.21.0
 pydantic==2.8.0
