@@ -16,6 +16,7 @@ from fatsia_growth.views.monitor.widgets import (
 from fatsia_growth.services.camera_service import CameraService
 from fatsia_growth.services.growth_detector import GrowthDetector
 from fatsia_growth.services.results_uploader import ResultsUploader
+from fatsia_growth.services.results_logger import ResultsLogger
 
 class MonitorWidget(QWidget):
     def __init__(
@@ -49,7 +50,11 @@ class MonitorWidget(QWidget):
         )  
         self.option_bar.upload_server_requested.connect(
             self.on_upload_server_requested
-        )       
+        )
+
+        self.option_bar.log_result_requested.connect(
+            self.on_log_result_requested
+        )
         
         self.result_image_display = ResultImageDisplay()        
         
@@ -81,6 +86,9 @@ class MonitorWidget(QWidget):
         self.results_uploader = ResultsUploader(
             config=config
         )
+        self.results_logger = ResultsLogger(
+            config=config
+        )
         
         self.camera_service.camera_connection_changed.connect(
             self.option_bar.on_camera_connection_changed
@@ -101,7 +109,20 @@ class MonitorWidget(QWidget):
         self.growth_detector.model_result_display_signal.connect(
             self.result_list_display.on_model_result_display_signal
         )
+
+        self.growth_detector.model_result_log_signal.connect(
+            self.on_model_result_log_signal
+        )
+
+    @pyqtSlot(object)
+    def on_model_result_log_signal(self, result):
+        if not self.results_logger.thread.isRunning():
+            return
         
+        if self.results_logger.results_queue.full():
+            # make space by removing the oldest item
+            self.results_logger.results_queue.get()
+        self.results_logger.results_queue.put(result)
     
     @pyqtSlot(object, object)
     def on_model_result_upload_signal(self, frame, result):
@@ -170,6 +191,28 @@ class MonitorWidget(QWidget):
             # Stop the results uploader
             if self.results_uploader.thread.isRunning():
                 self.results_uploader.stop()
+    
+    @pyqtSlot(bool)
+    def on_log_result_requested(self, log_enable):
+        if log_enable:
+            self.growth_detector.model_result_log = True
+
+            # Start the log result
+            if self.results_logger.thread.isRunning():
+                self.results_logger.stop()
+            
+            self.results_logger.start()
+
+            print("log result enable")
+        else:
+            self.growth_detector.model_result_log = False 
+            
+            # Stop the log result
+            if self.results_logger.thread.isRunning():
+                self.results_logger.stop()
+            print("log result disable")
+
+
         
         
         

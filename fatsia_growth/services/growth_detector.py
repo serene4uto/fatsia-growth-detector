@@ -15,6 +15,10 @@ class GrowthDetector(QObject):
     
     model_result_upload = False
     model_result_upload_signal = pyqtSignal(object, object)
+
+    model_result_log = False
+    model_result_log_signal = pyqtSignal(object)
+
     
     model_result_display_signal = pyqtSignal(object)
     
@@ -66,6 +70,8 @@ class GrowthDetector(QObject):
                             self.model_result_display_signal.emit(results)
                             if self.model_result_upload:
                                 self.model_result_upload_signal.emit(frame, results)
+                            if self.model_result_log:
+                                self.model_result_log_signal.emit(results)
                             
             else:
                 logger.error(f"Model {self.rbf_model_id} could not be loaded.")

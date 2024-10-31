@@ -13,3 +13,6 @@ roboflow_model_ids:
 # server
 server_url: http://127.0.0.1:8000
 server_fatsia_growth_endpoint: /fatsia/growth
+
+#log
+log_directory: C:\Users\semi_J\Desktop\fatsia_project\fatsia-growth-detector\log

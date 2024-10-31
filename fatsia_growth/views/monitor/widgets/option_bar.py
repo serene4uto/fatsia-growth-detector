@@ -49,6 +49,7 @@ class OptionBar(QWidget):
     camera_connection_requested = pyqtSignal(int)
     model_toggle_requested = pyqtSignal(str)
     upload_server_requested = pyqtSignal(bool)
+    log_result_requested = pyqtSignal(bool)
     
     def __init__(
         self,
@@ -149,10 +150,14 @@ class OptionBar(QWidget):
     def on_log_result_btn(self):
         if self.is_log_result_enabled:
             # Request to disable the log result operation
-            pass
+            self.log_result_btn.setText("Enable")
+            self.is_log_result_enabled = False
+            self.log_result_requested.emit(False)
         else:
             # Request to disable the log result operation
-            pass
+            self.log_result_btn.setText("Disable")
+            self.is_log_result_enabled = True
+            self.log_result_requested.emit(True)
         
         
     def on_upload_server_btn(self):
