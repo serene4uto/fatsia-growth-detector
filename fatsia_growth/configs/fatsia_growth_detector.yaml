@@ -11,8 +11,10 @@ roboflow_model_ids:
   - fatsia_growth_stages/4
 
 # server
-server_url: http://127.0.0.1:8000
-server_fatsia_growth_endpoint: /fatsia/growth
+# server_url: http://127.0.0.1:8000
+# server_fatsia_growth_endpoint: /fatsia/growth
+server_url: https://ti3ty45vccvf2qdschgmug4sp40tghqw.lambda-url.ap-northeast-2.on.aws
+server_fatsia_growth_endpoint: "" #empty 
 
 #log
 log_directory: C:\Users\semi_J\Desktop\fatsia_project\fatsia-growth-detector\log

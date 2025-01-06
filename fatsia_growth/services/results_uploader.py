@@ -7,10 +7,6 @@ import cv2
 from fatsia_growth.utils.logger import logger
 from fatsia_growth.schemas.fatsia import GrowthStageData, Detection, BoundingBox, ImageData
 
-DEVICE_ID = "fatsia_001"    
-SERVER_URL =  "http://127.0.0.1:8000"
-RESULT_UPLOAD_ENDPOINT = "fatsia/growth"
-
 def encode_image_frame_to_base64(frame):
     """Encodes a frame to a base64 string."""
     ret, buffer = cv2.imencode('.jpg', frame)
@@ -53,7 +49,11 @@ class ResultsUploader(QObject):
                 try:
                     response = requests.post(
                         f"{self.config['server_url']}{self.config['server_fatsia_growth_endpoint']}",
-                        json=json_data
+                        headers={
+                            "accept": "application/json",
+                            "Content-Type": "application/json"
+                        },
+                        json=json_data,
                     )
                     response.raise_for_status()
                     logger.info(f"Results uploaded successfully: {response.status_code}")
